@@ -1,10 +1,12 @@
+const { db } = require('../connection');
 const { Model, DataTypes } = require('sequelize');
 
 class User extends Model {}
 
 User.init({
   uuid: {
-    type: DataTypes.UUIDV4,
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
   },
   username: {
@@ -16,6 +18,6 @@ User.init({
     type: DataTypes.STRING,
     allowNull: false,
   },
-});
+}, { sequelize: db, modelName: 'user' });
 
 module.exports = User;
