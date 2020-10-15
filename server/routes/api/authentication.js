@@ -33,11 +33,8 @@ authRouter.post('/login', async (req, res) => {
           });
           res.sendStatus(200);
         } else {
-          const createdSession = await Session.create({
-            user: foundUser,
-          }, {
-            include: [User],
-          });
+          const createdSession = await Session.create({});
+          await createdSession.setUser(foundUser);
 
           res.cookie('sid', createdSession.uuid, {
             maxAge: A_WEEK_IN_SECONDS,
@@ -55,3 +52,16 @@ authRouter.post('/login', async (req, res) => {
     }
   }
 });
+
+authRouter.get('/whoami', (req, res, next) => {
+  if (req.user) {
+    res.send({
+      username: req.user.username,
+      uuid: req.user.uuid,
+    });
+  } else {
+    res.sendStatus(401);
+  }
+});
+
+module.exports = authRouter;

@@ -4,6 +4,8 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
+const { auth } = require('./middleware/index');
+const { apiRouter } = require('./routes/index');
 
 dotenv.config();
 
@@ -17,7 +19,9 @@ const IS_DEV = process.env.NODE_ENV === 'development';
 server.use(volleyball);
 server.use(express.json());
 server.use(cookieParser());
+server.use(auth);
 server.use(express.static(DIST_PATH));
+server.use('/api', apiRouter);
 
 const startServer = () => new Promise((res) => {
   console.log(chalk.blue('Initializing server...'));
