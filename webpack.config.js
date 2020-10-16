@@ -11,7 +11,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Beaver',
+      title: 'Auth Template',
       template: path.join(__dirname, './client/template/index.ejs'),
     }),
   ],

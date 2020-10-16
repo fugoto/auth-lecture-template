@@ -1,6 +1,8 @@
 const { Router } = require('express');
+const bcrypt = require('bcrypt');
 const chalk = require('chalk');
 const { models } = require('../../db/index');
+const { hash } = require('../../utils/index');
 
 const { User, Session } = models;
 
@@ -20,10 +22,15 @@ authRouter.post('/login', async (req, res) => {
       const foundUser = await User.findOne({
         where: {
           username,
-          password,
         },
         include: [Session],
       });
+
+      const comparisonResult = await bcrypt.compare(password, foundUser.password);
+
+      if (!comparisonResult) {
+        throw new Error('Mismatched password!');
+      }
 
       if (foundUser) {
         if (foundUser.session) {
@@ -42,6 +49,8 @@ authRouter.post('/login', async (req, res) => {
           });
           res.sendStatus(201);
         }
+      } else {
+        res.sendStatus(404);
       }
     } catch (e) {
       console.log(chalk.red('Error while logging user in.'));
